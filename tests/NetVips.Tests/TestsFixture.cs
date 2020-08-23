@@ -7,6 +7,11 @@ namespace NetVips.Tests
     {
         private uint _handlerId;
 
+        static TestsFixture()
+        {
+            NetVips.Init();
+        }
+
         public void SetUpLogging(ITestOutputHelper output)
         {
             _handlerId = Log.SetLogHandler("VIPS", Enums.LogLevelFlags.Error, (domain, level, message) =>

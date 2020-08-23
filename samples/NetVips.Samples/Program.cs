@@ -16,7 +16,11 @@ namespace NetVips
 
         static void Main(string[] args)
         {
-            if (!ModuleInitializer.VipsInitialized)
+            try
+            {
+                NetVips.Init();
+            }
+            catch (Exception)
             {
                 Console.WriteLine("Error: Unable to init libvips. Please check your PATH environment variable.");
                 Console.ReadLine();

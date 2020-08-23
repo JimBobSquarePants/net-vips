@@ -2,7 +2,6 @@ namespace NetVips
 {
     using System;
     using System.IO;
-    using System.Buffers;
     using System.Runtime.InteropServices;
 
     /// <summary>
@@ -76,10 +75,10 @@ namespace NetVips
                 return 0;
             }
 
-            var tempArray = ArrayPool<byte>.Shared.Rent((int)length);
+            var managedArray = new byte[(int)length];
             try
             {
-                var readLength = OnRead?.Invoke(tempArray, (int)length);
+                var readLength = OnRead?.Invoke(managedArray, (int)length);
                 if (!readLength.HasValue)
                 {
                     return -1;
@@ -87,7 +86,7 @@ namespace NetVips
 
                 if (readLength.Value > 0)
                 {
-                    Marshal.Copy(tempArray, 0, buffer, readLength.Value);
+                    Marshal.Copy(managedArray, 0, buffer, readLength.Value);
                 }
 
                 return readLength.Value;
@@ -95,10 +94,6 @@ namespace NetVips
             catch
             {
                 return -1;
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(tempArray);
             }
         }
 

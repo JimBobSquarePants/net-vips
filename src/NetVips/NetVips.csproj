@@ -3,59 +3,24 @@
   <Import Project="..\..\build\common.props" />
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Optimize>true</Optimize>
-    <DefaultItemExcludes>$(DefaultItemExcludes);Interop\Libraries.*.cs</DefaultItemExcludes>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
-  <!-- Give an initial value based on the operating system where it's currently running on. -->
-  <PropertyGroup Condition="'$(TargetOS)' == ''">
-    <TargetOS Condition="$([MSBuild]::IsOSPlatform('Linux'))">Linux</TargetOS>
-    <TargetOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">OSX</TargetOS>
-    <TargetOS Condition="$([MSBuild]::IsOSPlatform('Windows'))">Windows</TargetOS>
+  <!-- Mimic Unity behavior on .NET / Mono -->
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <DefineConstants>UNITY_STANDALONE_LINUX</DefineConstants>
   </PropertyGroup>
-
-  <!-- Append target operating system to output path -->
-  <PropertyGroup>
-    <OutputPath>$(MSBuildThisFileDirectory)bin\$(Platform)\$(Configuration)\$(TargetFramework)\$(TargetOS)</OutputPath>
-    <IntermediateOutputPath>$(BaseIntermediateOutputPath)\$(Platform)\$(Configuration)\$(TargetFramework)\$(TargetOS)\</IntermediateOutputPath>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <DefineConstants>UNITY_STANDALONE_OSX</DefineConstants>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="Interop\Libraries.$(TargetOS).cs">
-        <Link>Interop\Libraries.cs</Link>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-    <PackageReference Include="Fody" Version="6.2.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="ModuleInit.Fody" Version="2.1.0">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <!-- Include .NET Standard packages on Linux and macOS -->
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)bin\$(Platform)\$(Configuration)\netstandard2.0\Linux\NetVips.dll">
-      <Pack>true</Pack>
-      <PackagePath>runtimes\linux\lib\netstandard2.0</PackagePath>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)bin\$(Platform)\$(Configuration)\netstandard2.0\OSX\NetVips.dll">
-      <Pack>true</Pack>
-      <PackagePath>runtimes\osx\lib\netstandard2.0</PackagePath>
-    </None>
-  </ItemGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <DefineConstants>UNITY_STANDALONE_WIN</DefineConstants>
+  </PropertyGroup>
 
 </Project>

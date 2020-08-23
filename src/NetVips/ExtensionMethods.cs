@@ -1,7 +1,6 @@
 namespace NetVips
 {
     using System;
-    using System.Buffers;
     using System.Runtime.InteropServices;
     using System.Text;
     using Internal;
@@ -142,15 +141,14 @@ namespace NetVips
                 return string.Empty;
             }
 
-            var bytes = ArrayPool<byte>.Shared.Rent(size);
+            var managedArray = new byte[size];
             try
             {
-                Marshal.Copy(utf8Str, bytes, 0, size);
-                return Encoding.UTF8.GetString(bytes, 0, size);
+                Marshal.Copy(utf8Str, managedArray, 0, size);
+                return Encoding.UTF8.GetString(managedArray, 0, size);
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(bytes);
                 if (freePtr)
                 {
                     GLib.GFree(utf8Str);

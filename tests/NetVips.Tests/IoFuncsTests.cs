@@ -194,12 +194,5 @@ namespace NetVips.Tests
             Assert.True(buf.Length > 0);
             Assert.True(lastPercent <= 100);
         }
-
-        [Fact]
-        public void TestModuleInitializer()
-        {
-            // vips should have been initialized when this assembly was loaded.
-            Assert.True(ModuleInitializer.VipsInitialized);
-        }
     }
 }

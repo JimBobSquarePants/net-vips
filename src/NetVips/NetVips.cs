@@ -14,11 +14,6 @@ namespace NetVips
         /// <summary>
         /// Init() starts up the world of VIPS.
         /// </summary>
-        /// <remarks>
-        /// This function will be automatically called by <see cref="ModuleInitializer.Initialize"/>
-        /// once the assembly is loaded. You should only call this method in your own program if the
-        /// <see cref="ModuleInitializer"/> fails to initialize libvips.
-        /// </remarks>
         /// <returns><see langword="true"/> if successful started; otherwise, <see langword="false"/>.</returns>
         public static bool Init()
         {
@@ -153,26 +148,10 @@ namespace NetVips
         /// Get the major, minor or patch version number of the libvips library.
         /// </summary>
         /// <param name="flag">Pass 0 to get the major version number, 1 to get minor, 2 to get patch.</param>
-        /// <param name="fromModule"><see langword="true"/> to get this value from the pre-initialized
-        /// <see cref="ModuleInitializer.Version"/> variable.</param>
         /// <returns>The version number.</returns>
         /// <exception cref="ArgumentOutOfRangeException">If <paramref name="flag"/> is not in range.</exception>
-        public static int Version(int flag, bool fromModule = true)
+        public static int Version(int flag)
         {
-            if (fromModule && ModuleInitializer.Version.HasValue)
-            {
-                var version = ModuleInitializer.Version.Value;
-                switch (flag)
-                {
-                    case 0:
-                        return (version >> 16) & 0xFF;
-                    case 1:
-                        return (version >> 8) & 0xFF;
-                    case 2:
-                        return version & 0xFF;
-                }
-            }
-
             if (flag < 0 || flag > 2)
             {
                 throw new ArgumentOutOfRangeException(nameof(flag), "Flag must be in the range of 0 to 2");
